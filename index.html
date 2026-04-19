@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoundWave</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- AUTH SCREENS -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-brand">
+    <div class="brand-logo">🎵</div>
+    <h1>SoundWave</h1>
+    <p>Tu música, tu mundo</p>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="login-form" class="auth-card">
+    <h2>Iniciar Sesión</h2>
+    <input type="text" id="login-email" placeholder="Email o usuario" class="input-field">
+    <input type="password" id="login-password" placeholder="Contraseña" class="input-field">
+    <button onclick="login()" class="btn-primary">Entrar</button>
+    <p class="auth-switch">¿No tienes cuenta? <a onclick="showRegister()">Regístrate</a></p>
+    <div id="login-error" class="error-msg"></div>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="register-form" class="auth-card hidden">
+    <h2>Crear Cuenta</h2>
+    <input type="text" id="reg-username" placeholder="Nombre de usuario" class="input-field">
+    <input type="text" id="reg-fullname" placeholder="Nombre completo" class="input-field">
+    <input type="email" id="reg-email" placeholder="Email" class="input-field">
+    <input type="password" id="reg-password" placeholder="Contraseña (mín. 6 caracteres)" class="input-field">
+    <button onclick="register()" class="btn-primary">Registrarse</button>
+    <p class="auth-switch">¿Ya tienes cuenta? <a onclick="showLogin()">Inicia sesión</a></p>
+    <div id="reg-error" class="error-msg"></div>
+  </div>
+
+  <!-- VERIFY -->
+  <div id="verify-form" class="auth-card hidden">
+    <h2>Verifica tu cuenta</h2>
+    <p class="verify-hint">Ingresa el código de verificación (en producción se envía por email)</p>
+    <div id="code-display" class="code-box"></div>
+    <input type="text" id="verify-code" placeholder="Código de verificación" class="input-field" style="letter-spacing:4px;text-align:center;font-size:1.4rem">
+    <button onclick="verify()" class="btn-primary">Verificar</button>
+    <div id="verify-error" class="error-msg"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" class="hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">🎵</span>
+      <span class="logo-text">SoundWave</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" onclick="showPage('home')">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Inicio
+      </a>
+      <a class="nav-item" onclick="showPage('search')">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Buscar
+      </a>
+      <a class="nav-item" onclick="showPage('library')">
+        <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Biblioteca
+      </a>
+      <div class="nav-divider"></div>
+      <a class="nav-item" onclick="showPage('playlists')">
+        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Mis Playlists
+      </a>
+      <a id="admin-link" class="nav-item hidden" onclick="showPage('admin')">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Admin Panel
+      </a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebar-avatar">👤</div>
+      <div class="user-info">
+        <span id="sidebar-username">Usuario</span>
+        <span id="sidebar-role"></span>
+      </div>
+      <button onclick="logout()" class="btn-logout" title="Cerrar sesión">⏻</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- HOME PAGE -->
+    <div id="page-home" class="page active">
+      <div class="page-header">
+        <h1>Bienvenido de vuelta <span id="welcome-name"></span> 👋</h1>
+      </div>
+      <section class="section">
+        <h2 class="section-title">🔥 Lo más popular</h2>
+        <div id="popular-songs" class="songs-grid"></div>
+      </section>
+      <section class="section">
+        <h2 class="section-title">🎸 Géneros</h2>
+        <div id="genres-grid" class="genres-grid"></div>
+      </section>
+      <section class="section">
+        <h2 class="section-title">🎵 Todas las canciones</h2>
+        <div id="all-songs" class="songs-list"></div>
+      </section>
+    </div>
+
+    <!-- SEARCH PAGE -->
+    <div id="page-search" class="page hidden">
+      <div class="search-bar-wrap">
+        <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="search-input" placeholder="Buscar canciones, artistas, álbumes..." class="search-bar" oninput="searchSongs()">
+      </div>
+      <div id="search-results" class="songs-list"></div>
+    </div>
+
+    <!-- LIBRARY PAGE -->
+    <div id="page-library" class="page hidden">
+      <div class="page-header"><h1>Tu Biblioteca</h1></div>
+      <div id="library-content" class="songs-list"></div>
+    </div>
+
+    <!-- PLAYLISTS PAGE -->
+    <div id="page-playlists" class="page hidden">
+      <div class="page-header">
+        <h1>Mis Playlists</h1>
+        <button onclick="showCreatePlaylist()" class="btn-primary btn-sm">+ Nueva Playlist</button>
+      </div>
+      <div id="create-playlist-form" class="card hidden" style="margin-bottom:2rem;padding:1.5rem">
+        <h3>Nueva Playlist</h3>
+        <input type="text" id="pl-name" placeholder="Nombre de la playlist" class="input-field">
+        <input type="text" id="pl-desc" placeholder="Descripción (opcional)" class="input-field">
+        <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
+          <button onclick="createPlaylist()" class="btn-primary btn-sm">Crear</button>
+          <button onclick="hideCreatePlaylist()" class="btn-secondary btn-sm">Cancelar</button>
+        </div>
+      </div>
+      <div id="playlists-grid" class="playlists-grid"></div>
+    </div>
+
+    <!-- PLAYLIST DETAIL -->
+    <div id="page-playlist-detail" class="page hidden">
+      <div class="playlist-detail-header">
+        <img id="pd-cover" src="" alt="cover" class="pd-cover">
+        <div class="pd-info">
+          <span class="pd-type">PLAYLIST</span>
+          <h1 id="pd-name"></h1>
+          <p id="pd-desc"></p>
+          <span id="pd-count" class="pd-meta"></span>
+        </div>
+      </div>
+      <button onclick="showPage('playlists')" class="btn-secondary btn-sm" style="margin-bottom:1rem">← Volver</button>
+      <div id="pd-songs" class="songs-list"></div>
+    </div>
+
+    <!-- ADMIN PAGE -->
+    <div id="page-admin" class="page hidden">
+      <div class="page-header"><h1>🛡️ Panel de Administrador</h1></div>
+      <div class="admin-tabs">
+        <button class="tab-btn active" onclick="showAdminTab('upload')">➕ Nueva Canción</button>
+        <button class="tab-btn" onclick="showAdminTab('manage')">🎵 Gestionar Canciones</button>
+      </div>
+
+      <!-- TAB UPLOAD -->
+      <div id="tab-upload" class="admin-panel">
+        <div class="admin-form-layout">
+
+          <!-- PREVIEW COLUMN -->
+          <div class="admin-preview-col">
+            <div class="song-preview-card">
+              <div class="preview-cover-wrap">
+                <img id="preview-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:12px">
+                <div id="preview-cover-placeholder" class="preview-placeholder">🎵</div>
+              </div>
+              <div class="preview-info">
+                <div id="preview-title" class="preview-title">Título de la canción</div>
+                <div id="preview-artist" class="preview-artist">Artista</div>
+                <div id="preview-genre-badge" class="preview-genre-badge" style="display:none"></div>
+              </div>
+              <audio id="preview-audio" controls style="width:100%;margin-top:0.75rem;display:none;border-radius:8px"></audio>
+              <div id="preview-duration" class="preview-duration" style="display:none"></div>
+            </div>
+            <div class="preview-hint">Vista previa en tiempo real</div>
+          </div>
+
+          <!-- FORM COLUMN -->
+          <div class="admin-fields-col">
+            <h3 style="margin-bottom:1.25rem;font-family:var(--font-display)">Agregar Nueva Canción</h3>
+
+            <div class="field-group">
+              <label class="field-label">Título <span class="required-star">*</span></label>
+              <input type="text" id="a-title" class="input-field" placeholder="Nombre de la canción" oninput="updatePreviewMeta()">
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Artista <span class="required-star">*</span></label>
+                <input type="text" id="a-author" class="input-field" placeholder="Nombre del artista" oninput="updatePreviewMeta()">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Álbum</label>
+                <input type="text" id="a-album" class="input-field" placeholder="Nombre del álbum">
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Género <span class="required-star">*</span></label>
+                <select id="a-genre" class="input-field" onchange="updatePreviewGenre()">
+                  <option value="">Seleccionar género</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Fecha de lanzamiento</label>
+                <input type="date" id="a-date" class="input-field">
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Duración (segundos) <span class="required-star">*</span></label>
+              <div style="display:flex;gap:0.5rem;align-items:center">
+                <input type="number" id="a-duration" class="input-field" placeholder="Se detecta automáticamente" style="flex:1">
+                <span id="duration-display" class="duration-badge" style="display:none"></span>
+              </div>
+              <span class="field-hint">Se completa solo si subes un archivo de audio</span>
+            </div>
+
+            <!-- AUDIO -->
+            <div class="media-section">
+              <div class="media-section-title">🎵 Audio</div>
+              <div class="media-toggle">
+                <button class="media-tab-btn active" id="audio-tab-url" onclick="switchMediaTab('audio','url')">URL</button>
+                <button class="media-tab-btn" id="audio-tab-file" onclick="switchMediaTab('audio','file')">Archivo</button>
+              </div>
+              <div id="audio-url-panel">
+                <input type="url" id="a-audio-url" class="input-field" placeholder="https://ejemplo.com/cancion.mp3" oninput="previewAudioFromUrl()">
+              </div>
+              <div id="audio-file-panel" style="display:none">
+                <div class="file-drop-zone" id="audio-drop"
+                  onclick="document.getElementById('a-audio-file').click()"
+                  ondragover="handleDragOver(event,'audio-drop')"
+                  ondragleave="handleDragLeave('audio-drop')"
+                  ondrop="handleDrop(event,'audio')">
+                  <div class="drop-icon">🎵</div>
+                  <div class="drop-text">Haz clic o arrastra un archivo</div>
+                  <div class="drop-hint">MP3, WAV, OGG, M4A</div>
+                </div>
+                <input type="file" id="a-audio-file" accept="audio/*" style="display:none" onchange="handleAudioFileSelect(this)">
+                <div id="audio-file-name" class="file-name-display" style="display:none"></div>
+              </div>
+            </div>
+
+            <!-- IMAGE -->
+            <div class="media-section">
+              <div class="media-section-title">🖼️ Portada</div>
+              <div class="media-toggle">
+                <button class="media-tab-btn active" id="image-tab-url" onclick="switchMediaTab('image','url')">URL</button>
+                <button class="media-tab-btn" id="image-tab-file" onclick="switchMediaTab('image','file')">Archivo</button>
+              </div>
+              <div id="image-url-panel">
+                <input type="url" id="a-image-url" class="input-field" placeholder="https://ejemplo.com/portada.jpg" oninput="previewImageFromUrl()">
+              </div>
+              <div id="image-file-panel" style="display:none">
+                <div class="file-drop-zone" id="image-drop"
+                  onclick="document.getElementById('a-image-file').click()"
+                  ondragover="handleDragOver(event,'image-drop')"
+                  ondragleave="handleDragLeave('image-drop')"
+                  ondrop="handleDrop(event,'image')">
+                  <div class="drop-icon">🖼️</div>
+                  <div class="drop-text">Haz clic o arrastra una imagen</div>
+                  <div class="drop-hint">JPG, PNG, WEBP</div>
+                </div>
+                <input type="file" id="a-image-file" accept="image/*" style="display:none" onchange="handleImageFileSelect(this)">
+              </div>
+            </div>
+
+            <button onclick="uploadSong()" class="btn-primary btn-upload" id="upload-btn">⬆️ Subir Canción</button>
+            <div id="upload-msg" class="msg-box"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB MANAGE -->
+      <div id="tab-manage" class="admin-panel hidden">
+        <div class="manage-header">
+          <input type="text" id="admin-search" class="input-field" placeholder="🔍 Buscar canción..." oninput="filterAdminSongs()" style="max-width:320px">
+          <span id="admin-songs-count" class="songs-count-badge"></span>
+        </div>
+        <div id="admin-songs-list" class="songs-list"></div>
+      </div>
+
+      <!-- EDIT MODAL -->
+      <div id="edit-song-modal" class="modal hidden">
+        <div class="modal-content modal-large">
+          <h3 style="margin-bottom:1.25rem;font-family:var(--font-display)">✏️ Editar Canción</h3>
+          <input type="hidden" id="edit-song-id">
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Título</label>
+              <input type="text" id="edit-title" class="input-field">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Artista</label>
+              <input type="text" id="edit-author" class="input-field">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Álbum</label>
+              <input type="text" id="edit-album" class="input-field">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Género</label>
+              <select id="edit-genre" class="input-field"></select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">URL de Audio</label>
+              <input type="url" id="edit-audio-url" class="input-field" placeholder="https://...">
+            </div>
+            <div class="field-group">
+              <label class="field-label">URL de Imagen</label>
+              <input type="url" id="edit-image-url" class="input-field" placeholder="https://...">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Duración (seg)</label>
+              <input type="number" id="edit-duration" class="input-field">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Fecha lanzamiento</label>
+              <input type="date" id="edit-date" class="input-field">
+            </div>
+          </div>
+          <div style="display:flex;gap:0.75rem;margin-top:1rem">
+            <button onclick="saveEditSong()" class="btn-primary btn-sm">💾 Guardar cambios</button>
+            <button onclick="closeEditModal()" class="btn-secondary btn-sm">Cancelar</button>
+          </div>
+          <div id="edit-msg" class="msg-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOW PLAYING / RECOMMENDATIONS -->
+    <div id="recommendations-panel" class="recs-panel hidden">
+      <h3>🤖 Recomendaciones IA</h3>
+      <p id="recs-reason" class="recs-reason"></p>
+      <div id="recs-songs" class="songs-list-mini"></div>
+    </div>
+
+  </main>
+
+  <!-- PLAYER -->
+  <div class="player" id="player">
+    <div class="player-song">
+      <img id="player-img" src="https://picsum.photos/seed/default/60/60" alt="cover" class="player-cover">
+      <div class="player-meta">
+        <span id="player-title" class="player-title">—</span>
+        <span id="player-artist" class="player-artist">Selecciona una canción</span>
+      </div>
+      <button id="player-like" onclick="toggleLike()" class="like-btn">♡</button>
+    </div>
+    <div class="player-controls">
+      <button onclick="prevSong()" class="ctrl-btn">⏮</button>
+      <button onclick="togglePlay()" class="ctrl-btn play-btn" id="play-btn">▶</button>
+      <button onclick="nextSong()" class="ctrl-btn">⏭</button>
+    </div>
+    <div class="player-progress-wrap">
+      <span id="current-time" class="time">0:00</span>
+      <div class="progress-bar" onclick="seekTo(event)" id="progress-bar">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+      <span id="duration-time" class="time">0:00</span>
+    </div>
+    <div class="player-volume">
+      <span>🔊</span>
+      <input type="range" id="volume-slider" min="0" max="1" step="0.02" value="0.8" oninput="setVolume(this.value)" class="volume-slider">
+    </div>
+  </div>
+
+</div>
+
+<audio id="audio-element"></audio>
+
+<div id="toast" class="toast hidden"></div>
+<div id="add-to-playlist-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Agregar a Playlist</h3>
+    <div id="modal-playlists"></div>
+    <button onclick="closeModal()" class="btn-secondary btn-sm" style="margin-top:1rem">Cancelar</button>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/player.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
