@@ -1,5 +1,5 @@
 // ─── API Configuration ───────────────────────────────────────────────────────
-const API_BASE = window.API_BASE || 'http://localhost:8000/api';
+const API_BASE = window.API_BASE || 'https://backend-souware-production.up.railway.app';
 
 let _token = localStorage.getItem('sw_token');
 let _user  = JSON.parse(localStorage.getItem('sw_user') || 'null');
