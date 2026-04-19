@@ -529,7 +529,7 @@ async function uploadSong() {
   if (audioFile) fd.append('audio_file', audioFile);
 
   try {
-    await api.request('POST', '/songs/', fd, true);
+    await api.request('POST', '/api/songs/', fd, true);
     msg.className = 'msg-box success';
     msg.textContent = '✅ Canción subida exitosamente';
     allSongs = await api.songs.list({ limit: 100 });
