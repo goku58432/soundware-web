@@ -41,47 +41,47 @@ const api = {
   put:    (p, b) => api.request('PUT',    p, b),
   delete: (p)    => api.request('DELETE', p),
 
-  // ── Auth ───────────────────────────────────────────────────────────────────
+// ── Auth ───────────────────────────────────────────────────────────────────
   auth: {
-    register: (d) => api.post('/auth/register', d),
-    verify:   (d) => api.post('/auth/verify', d),
-    login:    (d) => api.post('/auth/login', d),
+    register: (d) => api.post('/api/auth/register', d),
+    verify:   (d) => api.post('/api/auth/verify', d),
+    login:    (d) => api.post('/api/auth/login', d),
   },
 
   // ── Users ──────────────────────────────────────────────────────────────────
   users: {
-    me:     ()  => api.get('/users/me'),
-    update: (d) => api.put('/users/me', d),
+    me:     ()  => api.get('/api/users/me'),
+    update: (d) => api.put('/api/users/me', d),
   },
 
   // ── Songs ──────────────────────────────────────────────────────────────────
   songs: {
     list:    (params = {}) => {
       const q = new URLSearchParams(params).toString();
-      return api.get(`/songs/?${q}`);
+      return api.get(`/api/songs/?${q}`);
     },
-    get:     (id) => api.get(`/songs/${id}`),
-    popular: ()   => api.get('/songs/top/popular'),
-    play:    (id) => api.post(`/songs/${id}/play`),
-    create:  (fd) => api.request('POST', '/songs/', fd, true),
-    update:  (id, d) => api.put(`/songs/${id}`, d),
-    delete:  (id) => api.delete(`/songs/${id}`),
-    genres:  ()   => api.get('/songs/genres'),
+    get:     (id) => api.get(`/api/songs/${id}`),
+    popular: ()   => api.get('/api/songs/top/popular'),
+    play:    (id) => api.post(`/api/songs/${id}/play`),
+    create:  (fd) => api.request('POST', '/api/songs/', fd, true),
+    update:  (id, d) => api.put(`/api/songs/${id}`, d),
+    delete:  (id) => api.delete(`/api/songs/${id}`),
+    genres:  ()   => api.get('/api/songs/genres'),
   },
 
   // ── Playlists ──────────────────────────────────────────────────────────────
   playlists: {
-    mine:      ()    => api.get('/playlists/'),
-    get:       (id)  => api.get(`/playlists/${id}`),
-    create:    (d)   => api.post('/playlists/', d),
-    update:    (id, d) => api.put(`/playlists/${id}`, d),
-    delete:    (id)  => api.delete(`/playlists/${id}`),
-    addSong:   (plId, songId) => api.post(`/playlists/${plId}/songs`, { song_id: songId }),
-    removeSong:(plId, songId) => api.delete(`/playlists/${plId}/songs/${songId}`),
+    mine:      ()    => api.get('/api/playlists/'),
+    get:       (id)  => api.get(`/api/playlists/${id}`),
+    create:    (d)   => api.post('/api/playlists/', d),
+    update:    (id, d) => api.put(`/api/playlists/${id}`, d),
+    delete:    (id)  => api.delete(`/api/playlists/${id}`),
+    addSong:   (plId, songId) => api.post(`/api/playlists/${plId}/songs`, { song_id: songId }),
+    removeSong:(plId, songId) => api.delete(`/api/playlists/${plId}/songs/${songId}`),
   },
 
   // ── AI ─────────────────────────────────────────────────────────────────────
   ai: {
-    recommend: (songId) => api.get(`/ai/recommendations/${songId}`),
+    recommend: (songId) => api.get(`/api/ai/recommendations/${songId}`),
   }
 };
